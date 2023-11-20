@@ -12,7 +12,7 @@ int main()
     const int jumpVelocity{-600};
     bool isInAir{};
 
-    //nebula Texture Variables
+    //nebula Texture Variables weebd
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
     Rectangle nebulaRec{0.0, 0.0, nebula.width/8, nebula.height/8};
     Vector2 nebulaPos{windowWidth, windowHeight - nebula.height/8};
