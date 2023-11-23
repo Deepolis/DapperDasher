@@ -62,7 +62,7 @@ int main()
         0.0  // int nebRunningTime
     };
 
-    const int sizeOfNebulae{10};
+    const int sizeOfNebulae{2};
 
     AnimData nebulae[sizeOfNebulae]{};
     for (int i = 0; i < sizeOfNebulae; i++)
@@ -78,8 +78,16 @@ int main()
         nebulae[i].pos.x = windowDimension[0] + i * 450;
     }
 
+    Texture2D foreground = LoadTexture("textures/foreground.png");
+    Texture2D midground = LoadTexture("textures/back-buildings.png");
     Texture2D background = LoadTexture("textures/far-buildings.png");
     float bgX{};
+    float mgX{};
+    float fgX{};
+
+    float finishLine{nebulae[sizeOfNebulae -1].pos.x};
+
+    bool collision{false};
 
     SetTargetFPS(60);
     while(!WindowShouldClose()) //Window should only close when X or ESC are hit
@@ -89,17 +97,41 @@ int main()
         BeginDrawing();
         ClearBackground(WHITE);
 
+        //back, mid, & foreground creation
         bgX -= 200 * dT;
+        mgX -= 300 * dT;
+        fgX -= 400 * dT;
 
         if (bgX <= -background.width*6)
         {
             bgX = 0.0;
         }
-        
+
+        if (mgX <= -midground.width*6)
+        {
+            mgX = 0.0;
+        }
+
+        if (fgX <= -foreground.width*6)
+        {
+            fgX = 0.0;
+        }
+
         Vector2 bg1Pos{bgX, 0.0};
         DrawTextureEx(background, bg1Pos, 0.0, 6.0, WHITE);
         Vector2 bg2Pos{bgX + background.width*6, 0.0};
         DrawTextureEx(background, bg2Pos, 0.0, 6.0, WHITE);
+
+        Vector2 mgPos{mgX, 0.0};
+        DrawTextureEx(midground, mgPos, 0.0, 6.0, WHITE);
+        Vector2 mg2Pos{mgX + midground.width*6, 0.0};
+        DrawTextureEx(midground, mg2Pos, 0.0, 6.0, WHITE);
+
+        Vector2 fgPos{fgX, 0.0};
+        DrawTextureEx(foreground, fgPos, 0.0, 6.0, WHITE);
+        Vector2 fg2Pos{fgX + foreground.width*6, 0.0};
+        DrawTextureEx(foreground, fg2Pos, 0.0, 6.0, WHITE);
+        //end creation
 
         if(isOnGround(scarfyData, windowDimension[1])) //if scarfy's position on the ground
         {
@@ -120,6 +152,8 @@ int main()
 
         scarfyData.pos.y += velocity * dT;
 
+        finishLine += nebulaVel * dT;
+
         if (!isInAir) //animation freezes when he is in the air
         {
             scarfyData = updateAnimData(scarfyData, dT, 5);
@@ -134,19 +168,52 @@ int main()
         {
             nebulae[i] = updateAnimData(nebulae[i], dT, 7);
         }
-        //scary's vertical possible velocity is set due to delta time
 
-        for (int i = 0; i < sizeOfNebulae; i++)
+        for (AnimData nebula : nebulae)
+        {
+            float pad{20};
+            Rectangle nebRec{
+                nebula.pos.x + pad,
+                nebula.pos.y + pad,
+                nebula.rec.height - 2*pad,
+                nebula.rec.width - 2*pad,
+            };
+            Rectangle scarfyRec{
+                scarfyData.pos.x + pad,
+                scarfyData.pos.y + pad,
+                scarfyData.rec.height - 2*pad,
+                scarfyData.rec.width - 2*pad,
+            };
+            if (CheckCollisionRecs(nebRec, scarfyRec))
+            {
+                collision = true;
+            }
+        }
+
+        if (collision)
+        {
+            DrawText("Game Over!!", windowDimension[0]/2, windowDimension[1]/2, 40, RED);
+        }
+        else if (scarfyData.rec.x >= finishLine)
+        {
+            DrawText("YOU WIN!!!!!!", windowDimension[0]/2, windowDimension[1]/2, 40, RED);
+        }
+        else
+        {
+            for (int i = 0; i < sizeOfNebulae; i++)
         {
             DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
         }
         
-        DrawTextureRec(scarfy, scarfyData.rec, scarfyData.pos, WHITE);
+            DrawTextureRec(scarfy, scarfyData.rec, scarfyData.pos, WHITE);
+        }
 
         EndDrawing();
     }
-    UnloadTexture(scarfy); //properly unload scarfy texture
-    UnloadTexture(nebula); //properly unload nebula texture 
+    UnloadTexture(scarfy);
+    UnloadTexture(nebula);
     UnloadTexture(background);
+    UnloadTexture(midground);
+    UnloadTexture(foreground);
     CloseWindow();
 }
