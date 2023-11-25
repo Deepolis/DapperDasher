@@ -48,7 +48,7 @@ int main()
     //nebula Texture Variables
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
     
-    int nebulaVel{-600};
+    int nebulaVel{-400};
 
     //scarfy Texture Variables
     Texture2D scarfy = LoadTexture("textures/scarfy.png");
