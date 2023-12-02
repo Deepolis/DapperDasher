@@ -1,20 +1,19 @@
 #include "Character.h"
 #include "raymath.h"
 
-Character::Character()
+Character::Character(int winWidth, int winHeight)
 {
     width = texture.width / maxFrames;
     height = texture.height;
+    screenPos = {static_cast<float>(winWidth)/2.0f - scale * (0.5f * width),
+                 static_cast<float>(winHeight)/2.0f - scale * (0.5f * height)};
 }
 
-void Character::setScreenPos(int winWidth, int winHeight)
-{
-    screenPos = {(float)winWidth/2.0f - 4.0f * (0.5f * width),
-                 (float)winHeight/2.0f - 4.0f * (0.5f * height)};
-}
 
 void Character::tick(float deltaTime)
 {
+   worldPosLastFrame = worldPos;
+
    Vector2 direction{};
         if (IsKeyDown(KEY_A)) direction.x -= 1.0;
         if (IsKeyDown(KEY_D)) direction.x += 1.0;
@@ -33,6 +32,7 @@ void Character::tick(float deltaTime)
         {
             texture = idle;
         }
+
     //get the delta time
         runningTime += deltaTime;
         //iterate through frames overtime
@@ -43,9 +43,14 @@ void Character::tick(float deltaTime)
             if (frame > maxFrames) frame = 0;
         }
         //location on sprite sheet. multiply rightLeft to reverse the width of the sprite sheet. Flipping it.
-        Rectangle knightSource{frame * width/6.f, 0.f, rightLeft * width/6.f, height};
+        Rectangle knightSource{frame * width, 0.f, rightLeft * width, height};
         //location to draw on map
-        Rectangle knightDest{screenPos.x, screenPos.y, 4.0f * width/6.0f, 4.0f * height};
+        Rectangle knightDest{screenPos.x, screenPos.y, scale * width, scale * height};
         // Vector2 is the origin used as a reference point for scaling and rotation
         DrawTexturePro(texture, knightSource, knightDest, Vector2{}, 0.f, WHITE);
+}
+
+void Character::undoMovement()
+{
+    worldPos = worldPosLastFrame;
 }

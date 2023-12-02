@@ -4,16 +4,16 @@
 
 int main()
 {
-    const int windowWidth{600};
-    const int windowHeight{600};
+    const int windowWidth{2000};
+    const int windowHeight{1500};
     InitWindow(windowWidth, windowHeight, "Classy");
 
     Texture2D map = LoadTexture("nature_tileset/WorldMap.png");
     Vector2 mapPos{0.0, 0.0};
+    const float mapScale{4.0};
 
-    Character knight;
-    knight.setScreenPos(windowWidth, windowHeight);
-    // Coordinates of knight factoring in scaling
+    Character knight{windowWidth, windowHeight};
+
     SetTargetFPS(60);
     while (!WindowShouldClose())
     {
@@ -22,8 +22,17 @@ int main()
 
         mapPos = Vector2Scale(knight.getWorldPos(), -1.f);
 
-        DrawTextureEx(map, mapPos, 0.0, 4.0, WHITE);
+        DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
         knight.tick(GetFrameTime());
+
+        //check map bounds
+        if (knight.getWorldPos().x < 0.f ||
+            knight.getWorldPos().x + windowWidth > map.width * mapScale ||
+            knight.getWorldPos().y < 0.f ||
+            knight.getWorldPos().y + windowHeight > map.height * mapScale)
+        {
+            knight.undoMovement();
+        }
 
         EndDrawing();
     }
