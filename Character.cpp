@@ -33,7 +33,7 @@ void Character::tick(float deltaTime)
             texture = idle;
         }
 
-    //get the delta time
+        //get the delta time
         runningTime += deltaTime;
         //iterate through frames overtime
         if(runningTime >= updateTime)
@@ -53,4 +53,14 @@ void Character::tick(float deltaTime)
 void Character::undoMovement()
 {
     worldPos = worldPosLastFrame;
+}
+
+Rectangle Character::getCollisionRec()
+{
+    return Rectangle{
+    screenPos.x,
+    screenPos.y,
+    width * scale,
+    height * scale
+    };
 }
