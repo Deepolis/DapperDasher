@@ -2,11 +2,12 @@
 #include "raymath.h"
 #include "Character.h"
 #include "prop.h"
+#include "Enemy.h"
 
 int main()
 {
-    const int windowWidth{500};
-    const int windowHeight{500};
+    const int windowWidth{3000};
+    const int windowHeight{1500};
     InitWindow(windowWidth, windowHeight, "Classy");
 
     Texture2D map = LoadTexture("nature_tileset/WorldMap.png");
@@ -14,6 +15,11 @@ int main()
     const float mapScale{4.0};
 
     Character knight{windowWidth, windowHeight};
+
+    Enemy goblin{
+            Vector2{400.f, 500.f},
+            LoadTexture("characters/goblin_idle_spritesheet.png"),
+            LoadTexture("characters/goblin_run_spritesheet.png")};
 
     Prop props[2]{
             Prop{Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
@@ -56,6 +62,8 @@ int main()
             }
 
         }
+
+        goblin.tick(GetFrameTime());
 
         EndDrawing();
     }
