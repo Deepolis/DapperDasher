@@ -49,18 +49,3 @@ void Character::tick(float deltaTime)
         // Vector2 is the origin used as a reference point for scaling and rotation
         DrawTexturePro(texture, knightSource, knightDest, Vector2{}, 0.f, WHITE);
 }
-
-void Character::undoMovement()
-{
-    worldPos = worldPosLastFrame;
-}
-
-Rectangle Character::getCollisionRec()
-{
-    return Rectangle{
-    screenPos.x,
-    screenPos.y,
-    width * scale,
-    height * scale
-    };
-}
