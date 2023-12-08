@@ -12,23 +12,12 @@ Character::Character(int winWidth, int winHeight)
 
 void Character::tick(float deltaTime)
 {
+   Vector2 velocity{};
+        if (IsKeyDown(KEY_A)) velocity.x -= 1.0;
+        if (IsKeyDown(KEY_D)) velocity.x += 1.0;
+        if (IsKeyDown(KEY_W)) velocity.y -= 1.0;
+        if (IsKeyDown(KEY_S)) velocity.y += 1.0;
+        if (Vector2Length(velocity) != 0.0)
+
    BaseCharacter::tick(deltaTime);
-   Vector2 direction{};
-        if (IsKeyDown(KEY_A)) direction.x -= 1.0;
-        if (IsKeyDown(KEY_D)) direction.x += 1.0;
-        if (IsKeyDown(KEY_W)) direction.y -= 1.0;
-        if (IsKeyDown(KEY_S)) direction.y += 1.0;
-        if (Vector2Length(direction) != 0.0)
-        {    
-            //We normalize because the diagonal magnitude would be > 1.
-            // mapPos - direction moves the map opposite the direction to give running appearance 
-            worldPos = Vector2Add(worldPos, Vector2Scale(Vector2Normalize(direction), speed));
-            //if we have an if/else each with 1 statement, we can use a turnary operator, used on 3 arguments.
-            direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
-            texture = run;
-        }
-        else
-        {
-            texture = idle;
-        }
 }
