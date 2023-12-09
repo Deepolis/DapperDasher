@@ -13,8 +13,8 @@ void BaseCharacter::undoMovement()
 Rectangle BaseCharacter::getCollisionRec()
 {
     return Rectangle{
-    screenPos.x,
-    screenPos.y,
+    getScreenPos().x,
+    getScreenPos().y,
     width * scale,
     height * scale
     };
@@ -49,7 +49,7 @@ void BaseCharacter::tick(float deltaTime)
         //location on sprite sheet. multiply rightLeft to reverse the width of the sprite sheet. Flipping it.
         Rectangle knightSource{frame * width, 0.f, rightLeft * width, height};
         //location to draw on map
-        Rectangle knightDest{screenPos.x, screenPos.y, scale * width, scale * height};
+        Rectangle knightDest{getScreenPos().x, getScreenPos().y, scale * width, scale * height};
         // Vector2 is the origin used sdas a reference point for scaling and rotation
         DrawTexturePro(texture, knightSource, knightDest, Vector2{}, 0.f, WHITE);
 }

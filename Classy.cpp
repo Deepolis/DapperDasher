@@ -6,8 +6,8 @@
 
 int main()
 {
-    const int windowWidth{500};
-    const int windowHeight{400};
+    const int windowWidth{1000};
+    const int windowHeight{800};
     InitWindow(windowWidth, windowHeight, "Classy");
 
     Texture2D map = LoadTexture("nature_tileset/WorldMap.png");
