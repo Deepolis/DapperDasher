@@ -3,11 +3,12 @@
 #include "Character.h"
 #include "prop.h"
 #include "Enemy.h"
+#include <string>
 
 int main()
 {
-    const int windowWidth{1000};
-    const int windowHeight{800};
+    const int windowWidth{500};
+    const int windowHeight{400};
     InitWindow(windowWidth, windowHeight, "Classy");
 
     Texture2D map = LoadTexture("nature_tileset/WorldMap.png");
@@ -17,10 +18,26 @@ int main()
     Character knight{windowWidth, windowHeight};
 
     Enemy goblin{
-            Vector2{400.f, 500.f},
+            Vector2{100.f, 500.f},
             LoadTexture("characters/goblin_idle_spritesheet.png"),
             LoadTexture("characters/goblin_run_spritesheet.png")};
+          
+    Enemy slime{
+        Vector2{1000.f, 900.f},
+        LoadTexture("characters/slime_idle_spritesheet.png"),
+        LoadTexture("characters/slime_run_spritesheet.png")};
+
     goblin.setTarget(&knight);
+
+    Enemy* enemies[]{
+        &goblin,
+        &slime
+    };
+
+    for (auto enemy : enemies)
+    {
+        enemy->setTarget(&knight);
+    }
 
     Prop props[2]{
             Prop{Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
@@ -43,6 +60,20 @@ int main()
             prop.Render(knight.getWorldPos());
         }
 
+        if (!knight.getAlive())
+        {
+            DrawText("!gAmE OvER!",  60.f, 50.f, 40, RED);
+            EndDrawing();
+            continue;
+        }
+        else
+        {
+            std::string knightsHealth = "Health: ";
+            knightsHealth.append(std::to_string(knight.getHealth()), 0 , 5);
+            DrawText(knightsHealth.c_str(), 55.f, 45.f, 40, RED);
+
+        }
+
         knight.tick(GetFrameTime());
 
         //check map bounds
@@ -61,11 +92,23 @@ int main()
             {
                 knight.undoMovement();
             }
-
         }
 
-        goblin.tick(GetFrameTime());
+        for (auto enemy : enemies)
+        {
+            enemy->tick(GetFrameTime());
+        }
 
+    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+    {
+        for (auto enemy : enemies)
+        {
+            if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getCollisionRec()))
+            {
+                enemy->setAlive(false);
+            }
+        }
+    }
         EndDrawing();
     }
     CloseWindow();

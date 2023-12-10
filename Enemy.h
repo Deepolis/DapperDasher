@@ -12,4 +12,6 @@ public:
 private:
     Character* target;
     int toTarget{};
+    float dps{10.f};
+    float chaseRadius{25.f};
 };
